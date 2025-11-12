@@ -6,6 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .forms import CerrarSolicitudForm
+from django.db.models import OuterRef, Subquery, Q
+from django.core.paginator import Paginator
+
 
 # Se regresa JsonResponse en lugar de redirecciones para facilitar pruebas con herramientas como Postman.
 # Debe ser remplazado por redirecciones en producción.
@@ -70,3 +73,70 @@ def cerrar_solicitud(request, solicitud_id: int):
 	)
 	messages.success(request, 'Solicitud cerrada correctamente.')
 	return redirect('atender_solicitud', solicitud_id=solicitud_id)
+
+def listar_solicitudes(request):
+    estatus = request.GET.get('estatus')
+    search = (request.GET.get('search') or '').strip()
+    try:
+        # Lee el valor del select, con 10 como default
+        per_page = int(request.GET.get('per_page', 10))
+    except ValueError:
+        per_page = 10
+    
+    # Asegurarse que el valor sea uno de los permitidos
+    if per_page not in [5, 10, 25, 50]:
+        per_page = 10
+    # ------------------------------------------
+
+    # Subquery para obtener el último seguimiento de cada solicitud
+    ult_seguimiento = SeguimientoSolicitud.objects.filter(
+        solicitud=OuterRef('pk')
+    ).order_by('-fecha_creacion')
+
+    solicitudes_qs = Solicitud.objects.annotate(
+        ultimo_estatus=Subquery(ult_seguimiento.values('estatus')[:1])
+    )
+
+    # Filtro de búsqueda
+    if search:
+        solicitudes_qs = solicitudes_qs.filter(
+            Q(folio__icontains=search)
+            | Q(usuario__username__icontains=search)
+            | Q(usuario__first_name__icontains=search)
+            | Q(usuario__last_name__icontains=search)
+            | Q(tipo_solicitud__nombre__icontains=search)
+        )
+
+    # Filtro de estatus
+    if estatus and estatus in ['1', '2', '3', '4']:
+        if estatus == '1':
+            solicitudes_qs = solicitudes_qs.filter(Q(ultimo_estatus='1') | Q(ultimo_estatus__isnull=True))
+        else:
+            solicitudes_qs = solicitudes_qs.filter(ultimo_estatus=estatus)
+
+    # Conteos para tabs
+    base_qs = Solicitud.objects.annotate(
+        ultimo_estatus=Subquery(ult_seguimiento.values('estatus')[:1])
+    )
+    conteos = {
+        '1': base_qs.filter(Q(ultimo_estatus='1') | Q(ultimo_estatus__isnull=True)).count(),
+        '2': base_qs.filter(ultimo_estatus='2').count(),
+        '3': base_qs.filter(ultimo_estatus='3').count(),
+        '4': base_qs.filter(ultimo_estatus='4').count(),
+        'todos': base_qs.count(),
+    }
+
+    # PAGINACIÓN
+    paginator = Paginator(solicitudes_qs.order_by('-fecha_creacion'), per_page)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Renderizado
+    return render(request, 'solicitudes_table.html', {
+        'page_obj': page_obj,
+        'solicitudes': page_obj,  
+        'estatus_activo': estatus or 'todos',
+        'conteos': conteos,
+        'search': search,
+        'per_page': per_page,  
+    })

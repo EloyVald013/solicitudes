@@ -8,4 +8,5 @@ urlpatterns = [
     path('grafica_solicitudes/', views.vista_tres_graficas, name='grafica_solicitudes'),
     path('generar_pdf_graficas/', views.generar_pdf_graficas, name='generar_pdf_graficas'),
     path('generar_csv_graficas/', views.generar_csv_graficas, name='generar_csv_graficas'),
+    path('metricas/', views.metricas, name='metricas'),
 ]

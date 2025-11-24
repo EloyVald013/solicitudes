@@ -3,18 +3,10 @@
 {% block contenido %}
 
 <h1>Configurar campos del formulario: {{ formulario.nombre }}</h1>
-
-<<<<<<< HEAD
-<!-- FORMULARIO PARA AGREGAR CAMPOS -->
-=======
->>>>>>> 4841b6c4433c418e6ed99058fe96091272320409
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
 
-<<<<<<< HEAD
-    <button class="btn btn-primary" type="submit">Agregar campo</button>
-=======
     <div class="d-flex justify-content-start gap-2">
         <button class="btn btn-primary" type="submit">
             Agregar campo
@@ -24,7 +16,6 @@
             Cancelar
         </a>
     </div>
->>>>>>> 4841b6c4433c418e6ed99058fe96091272320409
 </form>
 
 <hr>
@@ -67,10 +58,7 @@
 <p>No hay campos agregados todavía.</p>
 {% endif %}
 
-<<<<<<< HEAD
-<!-- JS PARA MOSTRAR/OCULTAR CAMPOS SEGÚN EL TIPO -->
-=======
->>>>>>> 4841b6c4433c418e6ed99058fe96091272320409
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -103,8 +91,4 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-<<<<<<< HEAD
 {% endblock contenido %}
-=======
-{% endblock contenido %}
->>>>>>> 4841b6c4433c418e6ed99058fe96091272320409

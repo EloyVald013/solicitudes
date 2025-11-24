@@ -13,5 +13,5 @@ urlpatterns = [
     path('formularios/crear/', views.crear_o_editar_formulario, name='crear_formulario'),
     path('formularios/editar/<int:pk>/', views.crear_o_editar_formulario, name='editar_formulario'),
     path('formulario/<int:formulario_id>/campos/', views.crear_campos, name='crear_campos'),
-    path('formulario/campo/<int:campo_id>/eliminar/', views.eliminar_campo, name='eliminar_campo'),6091272320409
+    path('formulario/campo/<int:campo_id>/eliminar/', views.eliminar_campo, name='eliminar_campo'),
 ]

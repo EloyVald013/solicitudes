@@ -301,7 +301,7 @@ def crear_o_editar_formulario(request, pk=None):
         
         if form.is_valid():
             form.save()
-            return redirect('listar_formularios')
+            return redirect('lista_formularios')
     else:
         form = FormFormularioSolicitud(instance=instancia)
         
@@ -344,7 +344,6 @@ def crear_campos(request, formulario_id):
         'formulario': formulario,
         'campos': campos_existentes,
     })
-
 
 
 def eliminar_campo(request, campo_id):

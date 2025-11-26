@@ -245,3 +245,18 @@ def step_error_password_similar_username(context):
     """Verifica error de contraseña similar al username"""
     content = context.response.content.decode('utf-8')
     assert 'similar' in content.lower() or 'usuario' in content.lower()
+
+
+@then('es redirigido automáticamente a la página de cambio de contraseña')
+def step_redirigido_auto_cambiar_password(context):
+    """Verifica redirección automática a cambio de contraseña"""
+    assert context.response.redirect_chain[-1][0] == reverse('solicitudes_app:cambiar_password') or \
+           'cambiar-password' in context.response.redirect_chain[-1][0]
+
+
+@then('ve un mensaje indicando que debe cambiar su contraseña por seguridad')
+def step_ve_mensaje_debe_cambiar_seguridad(context):
+    """Verifica mensaje de seguridad sobre cambio obligatorio"""
+    content = context.response.content.decode('utf-8')
+    assert 'seguridad' in content.lower() or 'debe' in content.lower() or 'obligatorio' in content.lower()
+

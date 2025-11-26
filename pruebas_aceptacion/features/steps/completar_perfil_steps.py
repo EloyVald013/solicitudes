@@ -30,11 +30,8 @@ def step_perfil_completo_false(context):
     assert context.usuario.perfil_completo is False
 
 
-@given('el usuario "{username}" está autenticado')
-def step_usuario_autenticado(context, username):
-    """Autentica al usuario"""
-    usuario = Usuario.objects.get(username=username)
-    context.client.force_login(usuario)
+# Removed duplicate step - using existing one from gestion_usuarios_steps.py
+# @given('el usuario "{username}" está autenticado')
 
 
 @given('que el usuario está en la página de completar perfil')
@@ -165,10 +162,8 @@ def step_perfil_completo_true(context):
     assert usuario.perfil_completo is True
 
 
-@then('el usuario es redirigido a la página de bienvenida')
-def step_redirigido_bienvenida(context):
-    """Verifica redirección a bienvenida"""
-    assert reverse('bienvenida') in context.response.redirect_chain[-1][0]
+# Removed duplicate - using existing one from login_steps.py
+# @then('el usuario es redirigido a la página de bienvenida')
 
 
 @then('ve un mensaje de error "{mensaje}"')

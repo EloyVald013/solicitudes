@@ -89,11 +89,8 @@ def step_ve_parametro_next(context, next_param):
            f'next={next_param}' in str(context.response.redirect_chain)
 
 
-@then('el usuario es redirigido a la página de bienvenida')
-def step_redirigido_bienvenida(context):
-    """Verifica redirección a bienvenida"""
-    assert reverse('bienvenida') in context.response.redirect_chain[-1][0] or \
-           context.response.request['PATH_INFO'] == reverse('bienvenida')
+# Removed duplicate - using existing one from login_steps.py
+# @then('el usuario es redirigido a la página de bienvenida')
 
 
 @then('ve un mensaje indicando acceso no autorizado')

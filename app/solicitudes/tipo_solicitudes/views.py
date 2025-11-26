@@ -114,63 +114,139 @@ def generar_pdf_graficas(request):
     doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
     elements = []
     styles = getSampleStyleSheet()
+    
+    # Estilos personalizados
     title_style = ParagraphStyle('CustomTitle', parent=styles['Heading1'], fontSize=24, textColor=colors.HexColor('#1458b1'), spaceAfter=30, alignment=TA_CENTER)
+    
+    # Estilo para la tabla
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1458b1')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ])
+    
+    # Título principal
     title = Paragraph("Tendencias de Solicitudes", title_style)
     elements.append(title)
     elements.append(Spacer(1, 0.2*inch))
-    hoy = datetime.now().date()
-    año, semana, _ = hoy.isocalendar()
-    solicitudes = Solicitud.objects.all()
+    
+    # Obtener datos
+    hoy = datetime.now()
+    anio, semana, _ = hoy.isocalendar()
+    solicitudes = Solicitud.objects.all().select_related('usuario', 'tipo_solicitud')
+    
+    # Datos para gráficas
     solicitudes_hoy = solicitudes.filter(fecha_creacion__date=hoy)
     data_hoy = solicitudes_por_tipo(solicitudes_hoy)
+    
     inicio_semana = datetime.fromisocalendar(hoy.year, semana, 1)
     fin_semana = datetime.fromisocalendar(hoy.year, semana, 7)
     solicitudes_semana = solicitudes.filter(fecha_creacion__range=[inicio_semana, fin_semana])
     data_semana = solicitudes_por_tipo(solicitudes_semana)
+    
     solicitudes_mes = solicitudes.filter(fecha_creacion__year=hoy.year, fecha_creacion__month=hoy.month)
     data_mes = solicitudes_por_tipo(solicitudes_mes)
+    
     def crear_grafico(data, titulo):
         if not data:
             return None
-        fig, ax = plt.subplots(figsize=(8, 5))
-        tipos = [item['tipo'] for item in data]
-        totales = [item['total'] for item in data]
-        colores_barras = ['#c9a24d', '#202146', '#d7d7d7', '#c9a24d', '#202146']
-        bars = ax.bar(tipos, totales, color=colores_barras[:len(tipos)], width=0.6)
+
+        data_sorted = sorted(data, key=lambda x: x['total'], reverse=True)
+        data_top = data_sorted[:5]  # Solo los 5 más grandes
+
+        if len(data_sorted) > 5:
+            otros_total = sum(item['total'] for item in data_sorted[5:])
+            data_top.append({'tipo': 'Otros', 'total': otros_total})
+        
+        fig, ax = plt.subplots(figsize=(10, 6))
+        tipos = [item['tipo'] for item in data_top]
+        totales = [item['total'] for item in data_top]
+        colores_barras = ['#c9a24d', '#202146', '#d7d7d7', '#c9a24d', '#202146', '#888888']
+        
+        
+        # Usar posiciones numéricas para las barras
+        x_positions = range(len(tipos))
+        # Ancho fijo de barra (máximo 0.6, pero se ajusta si hay pocas barras)
+        bar_width = min(0.6, 0.4) if len(tipos) <= 2 else 0.6
+        
+        bars = ax.bar(x_positions, totales, color=colores_barras[:len(tipos)], width=bar_width)
+        
         max_valor = max(totales) if totales else 1
         ax.set_ylim(0, max_valor * 1.5)
+        
+        # Establecer límites fijos en el eje X para que las barras no ocupen todo el espacio
+        # Siempre mostrar al menos 5 espacios para que las barras se vean proporcionales
+        min_categories = 5
+        if len(tipos) < min_categories:
+            ax.set_xlim(-0.5, min_categories - 0.5)
+        else:
+            ax.set_xlim(-0.5, len(tipos) - 0.5)
+        
         ax.set_xlabel('Tipo de Solicitud', fontweight='bold', fontsize=11)
         ax.set_ylabel('Número de Solicitudes', fontweight='bold', fontsize=11)
         ax.set_title(titulo, fontsize=14, fontweight='bold', pad=20)
+        
         tipos_formateados = []
         for tipo in tipos:
-            if len(tipo) > 15:
+            if len(tipo) > 20:  # Si es muy largo, acortar
+                # Partir en palabras y limitar a 2 líneas máximo
                 palabras = tipo.split()
-                lineas = []
-                linea_actual = []
-                for palabra in palabras:
-                    linea_actual.append(palabra)
-                    if len(' '.join(linea_actual)) > 15:
-                        lineas.append(' '.join(linea_actual[:-1]))
-                        linea_actual = [palabra]
-                if linea_actual:
-                    lineas.append(' '.join(linea_actual))
-                tipos_formateados.append('\n'.join(lineas))
+                if len(palabras) > 3:
+                    # Tomar las primeras palabras que quepan en 20 caracteres
+                    linea1 = []
+                    linea2 = []
+                    chars_linea1 = 0
+                    
+                    for i, palabra in enumerate(palabras):
+                        if chars_linea1 + len(palabra) <= 20:
+                            linea1.append(palabra)
+                            chars_linea1 += len(palabra) + 1
+                        elif i < len(palabras) - 1:
+                            linea2.append(palabra)
+                    
+                    if linea2 and len(' '.join(linea2)) > 20:
+                        # Si la segunda línea es muy larga, acortar con "..."
+                        linea2_texto = ' '.join(linea2)
+                        linea2_texto = linea2_texto[:17] + '...'
+                        tipos_formateados.append(' '.join(linea1) + '\n' + linea2_texto)
+                    else:
+                        tipos_formateados.append(' '.join(linea1) + '\n' + ' '.join(linea2))
+                else:
+                    # Partir en la mitad si son pocas palabras pero texto largo
+                    mitad = len(tipo) // 2
+                    espacio = tipo.find(' ', mitad)
+                    if espacio != -1:
+                        tipos_formateados.append(tipo[:espacio] + '\n' + tipo[espacio+1:])
+                    else:
+                        tipos_formateados.append(tipo[:20] + '\n' + tipo[20:40])
             else:
                 tipos_formateados.append(tipo)
+                
         ax.set_xticks(range(len(tipos)))
         ax.set_xticklabels(tipos_formateados, fontsize=9, ha='center')
         plt.yticks(fontsize=10)
+        
         for i, v in enumerate(totales):
             ax.text(i, v + (max_valor * 0.02), str(v), ha='center', va='bottom', fontweight='bold', fontsize=11)
+            
         ax.yaxis.grid(True, linestyle='--', alpha=0.3)
         ax.set_axisbelow(True)
-        plt.tight_layout()
+        
+        plt.tight_layout(pad=2.0)
+
         img_buffer = io.BytesIO()
         plt.savefig(img_buffer, format='png', dpi=150, bbox_inches='tight', facecolor='white', edgecolor='none')
         img_buffer.seek(0)
         plt.close()
         return img_buffer
+
     def agregar_seccion(data, titulo_seccion):
         subtitle = Paragraph(titulo_seccion, styles['Heading2'])
         elements.append(subtitle)
@@ -184,12 +260,63 @@ def generar_pdf_graficas(request):
         else:
             elements.append(Paragraph("No hay datos para este período", styles['Normal']))
             elements.append(Spacer(1, 0.3*inch))
+
+    # Agregar gráficas
     agregar_seccion(data_hoy, "Solicitudes de Hoy")
     agregar_seccion(data_semana, "Solicitudes de Esta Semana")
     agregar_seccion(data_mes, "Solicitudes de Este Mes")
-    fecha_generacion = Paragraph(f"Reporte generado el {hoy.strftime('%d/%m/%Y')}", styles['Normal'])
+    
+    # Agregar tabla con todas las solicitudes
+    elements.append(PageBreak())  # Nueva página para la tabla
+    
+    # Título de la tabla
+    table_title = Paragraph("Detalle de Todas las Solicitudes", styles['Heading1'])
+    elements.append(table_title)
     elements.append(Spacer(1, 0.3*inch))
+    
+    # Preparar datos para la tabla
+    table_data = [['ID', 'Usuario', 'Tipo de Solicitud', 'Folio', 'Fecha de Creación']]
+    
+    for solicitud in solicitudes:
+        table_data.append([
+            str(solicitud.id),
+            solicitud.usuario.username if solicitud.usuario else 'N/A',
+            solicitud.tipo_solicitud.nombre if solicitud.tipo_solicitud else 'N/A',
+            solicitud.folio or 'N/A',
+            solicitud.fecha_creacion.strftime("%Y-%m-%d %H:%M:%S") if solicitud.fecha_creacion else 'N/A'
+        ])
+    
+    # Crear tabla
+    tabla = Table(table_data)
+    tabla.setStyle(table_style)
+    
+    # Ajustar el tamaño de la tabla si hay muchas columnas
+    tabla_width = doc.width
+    col_widths = [
+        tabla_width * 0.1,
+        tabla_width * 0.2, 
+        tabla_width * 0.25, 
+        tabla_width * 0.15, 
+        tabla_width * 0.3    
+    ]
+    
+    tabla = Table(table_data, colWidths=col_widths)
+    tabla.setStyle(table_style)
+    
+    # Agregar la tabla al documento
+    elements.append(tabla)
+    elements.append(Spacer(1, 0.3*inch))
+    
+    # Resumen al final
+    elements.append(Spacer(1, 0.2*inch))
+    total_solicitudes = Paragraph(f"Total de solicitudes en el sistema: {solicitudes.count()}", styles['Heading3'])
+    elements.append(total_solicitudes)
+    
+    fecha_generacion = Paragraph(f"Reporte generado el {hoy.strftime('%d/%m/%Y a las %H:%M:%S')}", styles['Normal'])
+    elements.append(Spacer(1, 0.1*inch))
     elements.append(fecha_generacion)
+    
+    # Construir PDF
     doc.build(elements)
     pdf = buffer.getvalue()
     buffer.close()

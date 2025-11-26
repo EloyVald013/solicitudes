@@ -7,9 +7,20 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: 30px 20px 40px;
+        /*margin: 30px 20px 40px;*/
         padding: 20px;
-        background: linear-gradient(135deg, #6b7fd7 0%, #9d8ec9 100%);
+        /*background: linear-gradient(135deg, #6b7fd7 0%, #9d8ec9 100%);*/
+        border-radius: 20px;
+        /*box-shadow: 0 8px 25px rgba(107, 127, 215, 0.3);*/
+    }
+
+    .download-container{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        /*margin: 30px 20px 40px;*/
+        padding: 20px;
+        /*background: linear-gradient(135deg, #6b7fd7 0%, #9d8ec9 100%);*/
         border-radius: 20px;
         box-shadow: 0 8px 25px rgba(107, 127, 215, 0.3);
     }
@@ -30,7 +41,7 @@
     }
 
     .download-label {
-        color: white;
+        color: rgb(49, 48, 48);
         font-weight: 600;
         font-size: 16px;
         margin-right: 5px;
@@ -93,6 +104,8 @@
         filter: brightness(0) invert(1);
     }
 
+
+
     @media (max-width: 768px) {
         .header-container {
             flex-direction: column;
@@ -112,10 +125,10 @@
 </style>
 
 <div class="header-container">
-    <h2 class="titulo-graficas">Tendencias de Solicitudes</h2>
+    <h1>Tendencias de Solicitudes</h1>
     
     <div class="download-container">
-        <audio id="audFanfare" src="{% static 'audio/fanfarrias.mp3' %}" preload="auto"></audio>
+        <!-- audio id="audFanfare" src="{% static 'audio/fanfarrias.mp3' %}" preload="auto"></audio -->
         <span class="download-label">Descargar como:</span>
         <button id="pdfBtn" class="download-btn" onclick="window.location.href='{% url 'generar_pdf_graficas' %}'" title="Descargar PDF">
             <img src="{% static 'img/download_pdf.png' %}" height="40px" width="35px" alt="PDF">
@@ -168,13 +181,11 @@
             title: { 
                 text: 'Tipo de Solicitud',
                 style: {
-                    fontWeight: 'bold',
-                    fontFamily: 'Garamond, "Times New Roman", serif'
+                    fontWeight: 'bold'
                 }
             },
             labels: {
                 style: {
-                    fontFamily: 'Garamond, "Times New Roman", serif', 
                     fontSize: '11px',                                   
                     fontWeight: 'normal'                                
                 }
@@ -204,13 +215,11 @@
             title: { 
                 text: 'Tipo de Solicitud',
                 style: {
-                    fontWeight: 'bold',
-                    fontFamily: 'Garamond, "Times New Roman", serif'
+                    fontWeight: 'bold'
                 }
             },
             labels: {
                 style: {
-                    fontFamily: 'Garamond, "Times New Roman", serif', 
                     fontSize: '11px',                                   
                     fontWeight: 'normal'                                
                 }
@@ -239,13 +248,11 @@
             title: { 
                 text: 'Tipo de Solicitud',
                 style: {
-                    fontWeight: 'bold',
-                    fontFamily: 'Garamond, "Times New Roman", serif'
+                    fontWeight: 'bold'
                 }
             },
             labels: {
                 style: {
-                    fontFamily: 'Garamond, "Times New Roman", serif', 
                     fontSize: '11px',                                   
                     fontWeight: 'normal'                                
                 }
@@ -256,8 +263,7 @@
             title: { 
                 text: 'Número de Solicitudes',
                 style: {
-                    fontWeight: 'bold',
-                    fontFamily: 'Garamond, "Times New Roman", serif'
+                    fontWeight: 'bold'
                 }
             }
         },

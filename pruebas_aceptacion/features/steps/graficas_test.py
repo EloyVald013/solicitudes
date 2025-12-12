@@ -13,8 +13,7 @@ def step_impl(context):
     context.wait = WebDriverWait(context.driver, 10)
 
 
-@when(
-    u'paso el mouse sobre una barra de la grafica con titulo "{titulo_grafica_solicitud}"')
+@when(u'paso el mouse sobre una barra de la grafica con titulo "{titulo_grafica_solicitud}"')
 def step_impl(context, titulo_grafica_solicitud):
 
     chart_map = {

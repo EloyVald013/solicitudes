@@ -1,4 +1,4 @@
-from behave import given, when, then
+from behave import given, then
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -6,12 +6,12 @@ from selenium.common.exceptions import TimeoutException
 
 from tipo_solicitudes.models import Solicitud, TipoSolicitud, SeguimientoSolicitud
 from django.contrib.auth import get_user_model
-from django.test import Client
-from datetime import datetime, timedelta
+from datetime import timedelta
+
 
 
 @given('existen solicitudes con tiempos de resolución calculables')
-def step_impl(context):
+def existen_solicitudes_calculables(context):
     """Crea solicitudes completadas con fechas de creación y resolución para calcular promedio."""
     Solicitud.objects.all().delete()
     TipoSolicitud.objects.all().delete()
@@ -57,7 +57,7 @@ def step_impl(context):
 
 
 @given('no existen solicitudes completadas')
-def step_impl(context):
+def no_existen_solicitudes_completadas(context):
     """Asegura que no haya solicitudes completadas en la DB."""
     Solicitud.objects.all().delete()
     TipoSolicitud.objects.all().delete()
@@ -72,16 +72,15 @@ def step_impl(context):
 
 
 @then('se debe mostrar un valor numérico en "Promedio Resolución"')
-def step_impl(context):
+def mostrar_valor_numerico_promedio(context):
     """Verifica que el span 'promedio-resolucion' muestre un valor numérico."""
     try:
-        total_span = WebDriverWait(
-            context.driver, 20).until(
+        total_span = WebDriverWait(context.driver, 20).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "#promedio-resolucion span")))
+                (By.CSS_SELECTOR, "#promedio-resolucion span"))
+        )
         text = total_span.text.strip()
         # El formato puede ser: "0s", "1min 30s", "2h 15min", "3d 5h"
-        import re
         assert text and text != "Sin datos", f"No se encontró valor o está vacío: {text}"
     except TimeoutException:
         raise AssertionError(
@@ -89,13 +88,13 @@ def step_impl(context):
 
 
 @then('debe mostrarse "Pendiente" en "Promedio Resolución"')
-def step_impl(context):
+def mostrar_pendiente_promedio(context):
     """Verifica que el span muestre 'Sin datos' si no hay solicitudes completadas."""
     try:
-        total_span = WebDriverWait(
-            context.driver, 20).until(
+        total_span = WebDriverWait(context.driver, 20).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "#promedio-resolucion span")))
+                (By.CSS_SELECTOR, "#promedio-resolucion span"))
+        )
         text = total_span.text.strip()
         assert text == "Sin datos", f"Se esperaba 'Sin datos' pero se encontró '{text}'"
     except TimeoutException:

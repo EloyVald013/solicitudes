@@ -5,8 +5,7 @@ from functools import wraps
 
 def rol_requerido(*roles):
     """
-    Decorador para verificar que el usuario tenga uno de los roles
-    especificados
+    Decorador para verificar que el usuario tenga uno de los roles especificados
 
     Uso:
     @rol_requerido('administrador', 'control_escolar')

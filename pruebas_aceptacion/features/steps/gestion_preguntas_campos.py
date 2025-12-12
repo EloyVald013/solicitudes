@@ -66,10 +66,8 @@ def step_impl(context, nombre):
         try:
             campo_oculto = context.driver.find_element(By.NAME, 'formulario')
             context.driver.execute_script(
-                "arguments[0].value = arguments[1];",
-                campo_oculto,
-                context.formulario_id)
-        except BaseException:
+                "arguments[0].value = arguments[1];", campo_oculto, context.formulario_id)
+        except:
             pass
 
 
@@ -106,17 +104,15 @@ def step_impl(context, orden):
         try:
             campo_oculto = context.driver.find_element(By.NAME, 'formulario')
             context.driver.execute_script(
-                "arguments[0].value = arguments[1];",
-                campo_oculto,
-                context.formulario_id)
-        except BaseException:
+                "arguments[0].value = arguments[1];", campo_oculto, context.formulario_id)
+        except:
             pass
 
     try:
         agregar_btn = context.driver.find_element(
             By.XPATH, "//button[contains(text(), 'Agregar campo')]")
         agregar_btn.click()
-    except BaseException:
+    except:
         agregar_btn = context.driver.find_element(
             By.XPATH, "//button[@type='submit']")
         agregar_btn.click()
@@ -163,17 +159,15 @@ def step_impl(context, etiqueta):
         try:
             campo_oculto = context.driver.find_element(By.NAME, 'formulario')
             context.driver.execute_script(
-                "arguments[0].value = arguments[1];",
-                campo_oculto,
-                context.formulario_id)
-        except BaseException:
+                "arguments[0].value = arguments[1];", campo_oculto, context.formulario_id)
+        except:
             pass
 
     try:
         agregar_btn = context.driver.find_element(
             By.XPATH, "//button[contains(text(), 'Agregar campo')]")
         agregar_btn.click()
-    except BaseException:
+    except:
         agregar_btn = context.driver.find_element(
             By.XPATH, "//button[@type='submit']")
         agregar_btn.click()
@@ -234,17 +228,15 @@ def step_impl(context, orden1, orden2, orden3):
                 campo_oculto = context.driver.find_element(
                     By.NAME, 'formulario')
                 context.driver.execute_script(
-                    "arguments[0].value = arguments[1];",
-                    campo_oculto,
-                    context.formulario_id)
-            except BaseException:
+                    "arguments[0].value = arguments[1];", campo_oculto, context.formulario_id)
+            except:
                 pass
 
         try:
             agregar_btn = context.driver.find_element(
                 By.XPATH, "//button[contains(text(), 'Agregar campo')]")
             agregar_btn.click()
-        except BaseException:
+        except:
             agregar_btn = context.driver.find_element(
                 By.XPATH, "//button[@type='submit']")
             agregar_btn.click()
@@ -362,10 +354,10 @@ def step_impl(context, cantidad):
 @when(u'visualizo la tabla de campos agregados')
 def step_impl(context):
     try:
-        tabla = WebDriverWait(
-            context.driver, 10).until(
+        tabla = WebDriverWait(context.driver, 10).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, '.table-bordered')))
+                (By.CSS_SELECTOR, '.table-bordered'))
+        )
         assert tabla.is_displayed(), "La tabla de campos no está visible"
     except BaseException:
         pass
@@ -379,23 +371,19 @@ def step_impl(context):
         try:
             campo_oculto = context.driver.find_element(By.NAME, 'formulario')
             context.driver.execute_script(
-                "arguments[0].value = arguments[1];",
-                campo_oculto,
-                context.formulario_id)
-        except BaseException:
+                "arguments[0].value = arguments[1];", campo_oculto, context.formulario_id)
+        except:
             pass
 
     wait = WebDriverWait(context.driver, 10)
     try:
         agregar_btn = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//button[contains(text(), 'Agregar campo')]")))
-    except BaseException:
-        agregar_btn = wait.until(
-            EC.presence_of_element_located(
-                (By.XPATH, "//button[@type='submit']")))
+    except:
+        agregar_btn = wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//button[@type='submit']")))
     context.driver.execute_script(
-        "arguments[0].scrollIntoView({block: 'center'});",
-        agregar_btn)
+        "arguments[0].scrollIntoView({block: 'center'});", agregar_btn)
     time.sleep(0.5)
     context.driver.execute_script("arguments[0].click();", agregar_btn)
     time.sleep(2)
@@ -405,9 +393,8 @@ def step_impl(context):
 def step_impl(context, etiqueta):
     try:
         wait = WebDriverWait(context.driver, 10)
-        tabla = wait.until(
-            EC.presence_of_element_located(
-                (By.CLASS_NAME, 'table-bordered')))
+        tabla = wait.until(EC.presence_of_element_located(
+            (By.CLASS_NAME, 'table-bordered')))
         tbody = tabla.find_element(By.TAG_NAME, 'tbody')
         trs = tbody.find_elements(By.TAG_NAME, 'tr')
 
@@ -432,9 +419,8 @@ def step_impl(context, etiqueta):
 @then(u'visualizo la tabla de campos configurados')
 def step_impl(context):
     wait = WebDriverWait(context.driver, 10)
-    tabla = wait.until(
-        EC.presence_of_element_located(
-            (By.CSS_SELECTOR, '.table-bordered')))
+    tabla = wait.until(EC.presence_of_element_located(
+        (By.CSS_SELECTOR, '.table-bordered')))
     assert tabla is not None
     time.sleep(0.5)
 
@@ -442,8 +428,7 @@ def step_impl(context):
 @when(u'presiono el botón "Cancelar" en la página de preguntas')
 def step_impl(context):
     cancelar_btn = context.driver.find_element(
-        By.XPATH,
-        "//a[contains(@class, 'btn-secondary') and contains(text(), 'Cancelar')]")
+        By.XPATH, "//a[contains(@class, 'btn-secondary') and contains(text(), 'Cancelar')]")
     cancelar_btn.click()
     time.sleep(1)
 
@@ -453,9 +438,8 @@ def step_impl(context):
 @then(u'veo la pregunta "{etiqueta}" en la tabla de campos agregados')
 def step_impl(context, etiqueta):
     wait = WebDriverWait(context.driver, 10)
-    tabla = wait.until(
-        EC.presence_of_element_located(
-            (By.CSS_SELECTOR, '.table-bordered')))
+    tabla = wait.until(EC.presence_of_element_located(
+        (By.CSS_SELECTOR, '.table-bordered')))
     tbody = tabla.find_element(By.TAG_NAME, 'tbody')
     trs = tbody.find_elements(By.TAG_NAME, 'tr')
 
@@ -618,7 +602,7 @@ def step_impl(context):
             By.CLASS_NAME, 'errorlist')
         assert len(
             error_elements) > 0, "No se encontró mensaje de error de orden duplicado"
-    except BaseException:
+    except:
         pass
     time.sleep(1)
 

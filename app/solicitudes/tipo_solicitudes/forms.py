@@ -4,6 +4,7 @@ from .models import (ArchivoAdjunto, RespuestaCampo, SeguimientoSolicitud,
                      Solicitud)
 
 
+
 class FormTipoSolicitud(forms.ModelForm):
     class Meta:
         model = TipoSolicitud

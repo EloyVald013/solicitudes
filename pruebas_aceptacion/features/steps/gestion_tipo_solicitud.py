@@ -25,9 +25,8 @@ def step_impl(context, nombre):
     time.sleep(1)
 
     wait = WebDriverWait(context.driver, 10)
-    body = wait.until(
-        EC.presence_of_element_located(
-            (By.ID, 'bodyTipoSolicitudes')))
+    body = wait.until(EC.presence_of_element_located(
+        (By.ID, 'bodyTipoSolicitudes')))
     trs = body.find_elements(By.TAG_NAME, 'tr')
     existe = False
 
@@ -123,9 +122,8 @@ def step_impl(context, nombre):
         time.sleep(1)
 
     wait = WebDriverWait(context.driver, 10)
-    body = wait.until(
-        EC.presence_of_element_located(
-            (By.ID, 'bodyTipoSolicitudes')))
+    body = wait.until(EC.presence_of_element_located(
+        (By.ID, 'bodyTipoSolicitudes')))
     trs = body.find_elements(By.TAG_NAME, 'tr')
     tipos_solicitud = []
 
@@ -160,9 +158,8 @@ def step_impl(context, nombre):
         time.sleep(1)
 
     wait = WebDriverWait(context.driver, 10)
-    body = wait.until(
-        EC.presence_of_element_located(
-            (By.ID, 'bodyTipoSolicitudes')))
+    body = wait.until(EC.presence_of_element_located(
+        (By.ID, 'bodyTipoSolicitudes')))
     trs = body.find_elements(By.TAG_NAME, 'tr')
     tipos_solicitud = []
 
@@ -182,9 +179,8 @@ def step_impl(context, cantidad):
         time.sleep(1)
 
     wait = WebDriverWait(context.driver, 10)
-    body = wait.until(
-        EC.presence_of_element_located(
-            (By.ID, 'bodyTipoSolicitudes')))
+    body = wait.until(EC.presence_of_element_located(
+        (By.ID, 'bodyTipoSolicitudes')))
     trs = body.find_elements(By.TAG_NAME, 'tr')
     numero_actual = len(
         [tr for tr in trs if tr.find_elements(By.TAG_NAME, 'td')])
@@ -236,9 +232,8 @@ def step_impl(context, nombre):
         time.sleep(1)
 
     wait = WebDriverWait(context.driver, 10)
-    body = wait.until(
-        EC.presence_of_element_located(
-            (By.ID, 'bodyTipoSolicitudes')))
+    body = wait.until(EC.presence_of_element_located(
+        (By.ID, 'bodyTipoSolicitudes')))
     trs = body.find_elements(By.TAG_NAME, 'tr')
     tipos_solicitud = []
 
@@ -259,7 +254,7 @@ def step_impl(context):
             By.CLASS_NAME, 'errorlist')
         assert len(
             error_elements) > 0, "No se encontró mensaje de error por límite de caracteres"
-    except BaseException:
+    except:
         pass
     time.sleep(1)
 
@@ -272,6 +267,6 @@ def step_impl(context):
             By.CLASS_NAME, 'errorlist')
         assert len(
             error_elements) > 0, "No se encontró mensaje de error por límite en descripción"
-    except BaseException:
+    except:
         pass
     time.sleep(1)

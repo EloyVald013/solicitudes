@@ -20,9 +20,8 @@ def step_impl(context, nombre):
     time.sleep(1)
 
     wait = WebDriverWait(context.driver, 10)
-    body = wait.until(
-        EC.presence_of_element_located(
-            (By.ID, 'bodyTipoSolicitudes')))
+    body = wait.until(EC.presence_of_element_located(
+        (By.ID, 'bodyTipoSolicitudes')))
     trs = body.find_elements(By.TAG_NAME, 'tr')
     existe = False
 
@@ -38,9 +37,8 @@ def step_impl(context, nombre):
         time.sleep(0.5)
 
         wait = WebDriverWait(context.driver, 10)
-        body_tipos = wait.until(
-            EC.presence_of_element_located(
-                (By.ID, 'bodyTipoSolicitudes')))
+        body_tipos = wait.until(EC.presence_of_element_located(
+            (By.ID, 'bodyTipoSolicitudes')))
         trs_tipos = body_tipos.find_elements(By.TAG_NAME, 'tr')
         tipo_existe = False
 
@@ -82,13 +80,12 @@ def step_impl(context, nombre):
                 select.select_by_index(1)
 
         context.driver.find_element(By.NAME, 'nombre').send_keys(nombre)
-        context.driver.find_element(
-            By.NAME, 'descripcion').send_keys(f"Descripción de {nombre}")
+        context.driver.find_element(By.NAME, 'descripcion').send_keys(
+            f"Descripción de {nombre}")
 
         wait = WebDriverWait(context.driver, 10)
-        submit_btn = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[@type='submit']")))
+        submit_btn = wait.until(EC.element_to_be_clickable(
+            (By.XPATH, "//button[@type='submit']")))
         context.driver.execute_script(
             "arguments[0].scrollIntoView({block: 'center'});", submit_btn)
         time.sleep(0.5)
@@ -123,8 +120,8 @@ def step_impl(context, tipo):
         context.driver.get(f"{context.url}/tipo-solicitud/agregar/")
         time.sleep(1)
         context.driver.find_element(By.NAME, 'nombre').send_keys(tipo)
-        context.driver.find_element(
-            By.NAME, 'descripcion').send_keys(f"Descripción de {tipo}")
+        context.driver.find_element(By.NAME, 'descripcion').send_keys(
+            f"Descripción de {tipo}")
         select_resp = context.driver.find_element(By.NAME, 'responsable')
         Select(select_resp).select_by_value('1')
         context.driver.find_element(
@@ -166,10 +163,9 @@ def step_impl(context):
     try:
         crear_btn = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//button[contains(text(), 'Crear Formulario')]")))
-    except BaseException:
-        crear_btn = wait.until(
-            EC.presence_of_element_located(
-                (By.XPATH, "//button[@type='submit']")))
+    except:
+        crear_btn = wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//button[@type='submit']")))
     context.driver.execute_script(
         "arguments[0].scrollIntoView({block: 'center'});", crear_btn)
     time.sleep(0.5)
@@ -181,16 +177,13 @@ def step_impl(context):
 def step_impl(context):
     wait = WebDriverWait(context.driver, 10)
     try:
-        cancelar_btn = wait.until(
-            EC.presence_of_element_located(
-                (By.XPATH,
-                 "//a[contains(@class, 'btn-secondary') and contains(text(), 'Cancelar')]")))
-    except BaseException:
+        cancelar_btn = wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//a[contains(@class, 'btn-secondary') and contains(text(), 'Cancelar')]")))
+    except:
         cancelar_btn = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//a[contains(@href, 'formularios')]")))
     context.driver.execute_script(
-        "arguments[0].scrollIntoView({block: 'center'});",
-        cancelar_btn)
+        "arguments[0].scrollIntoView({block: 'center'});", cancelar_btn)
     time.sleep(0.5)
     context.driver.execute_script("arguments[0].click();", cancelar_btn)
     time.sleep(1)
@@ -206,19 +199,18 @@ def step_impl(context, nombre):
     for tr in trs:
         tds = tr.find_elements(By.TAG_NAME, 'td')
         if tds and nombre in tds[1].text:
-            dropdown_btn = WebDriverWait(
-                context.driver, 10).until(
-                EC.element_to_be_clickable(
-                    tr.find_element(
-                        By.CLASS_NAME, 'dropdown-toggle')))
+            dropdown_btn = WebDriverWait(context.driver, 10).until(
+                EC.element_to_be_clickable(tr.find_element(
+                    By.CLASS_NAME, 'dropdown-toggle'))
+            )
             context.driver.execute_script(
                 "arguments[0].scrollIntoView(true);", dropdown_btn)
             time.sleep(0.3)
             dropdown_btn.click()
-            WebDriverWait(
-                context.driver, 10).until(
+            WebDriverWait(context.driver, 10).until(
                 EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, '.dropdown-menu.show')))
+                    (By.CSS_SELECTOR, '.dropdown-menu.show'))
+            )
             time.sleep(0.5)
             break
     else:
@@ -227,10 +219,10 @@ def step_impl(context, nombre):
 
 @when(u'selecciono la opción "{opcion}"')
 def step_impl(context, opcion):
-    dropdown_menu = WebDriverWait(
-        context.driver, 10).until(
+    dropdown_menu = WebDriverWait(context.driver, 10).until(
         EC.visibility_of_element_located(
-            (By.CSS_SELECTOR, '.dropdown-menu.show')))
+            (By.CSS_SELECTOR, '.dropdown-menu.show'))
+    )
     opcion_link = dropdown_menu.find_element(
         By.XPATH, f".//a[contains(., '{opcion}')]")
     context.driver.execute_script(
@@ -263,13 +255,11 @@ def step_impl(context):
     try:
         guardar_btn = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//button[contains(text(), 'Guardar Cambios')]")))
-    except BaseException:
-        guardar_btn = wait.until(
-            EC.presence_of_element_located(
-                (By.XPATH, "//button[@type='submit']")))
+    except:
+        guardar_btn = wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//button[@type='submit']")))
     context.driver.execute_script(
-        "arguments[0].scrollIntoView({block: 'center'});",
-        guardar_btn)
+        "arguments[0].scrollIntoView({block: 'center'});", guardar_btn)
     time.sleep(0.5)
     context.driver.execute_script("arguments[0].click();", guardar_btn)
     time.sleep(2)

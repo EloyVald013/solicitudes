@@ -48,9 +48,32 @@
                 <td>{{ campo.opciones }}</td>
                 <td>{{ campo.cantidad_archivos }}</td>
                 <td>
-                    <a href="{% url 'eliminar_campo' campo.id %}" class="btn btn-danger btn-sm">
-                        Eliminar
-                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" 
+                                type="button" 
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false">
+                            Opciones
+                        </button>
+                        
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item btn-editar-campo" 
+                                   href="#" 
+                                   data-bs-toggle="modal" 
+                                   data-bs-target="#editarCampoModal"
+                                   data-campo-id="{{ campo.id }}"
+                                   data-campo-etiqueta="{{ campo.etiqueta }}">
+                                    <i class="fas fa-edit me-2"></i> Editar
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'eliminar_campo' campo.id %}" class="dropdown-item text-danger">
+                                    <i class="fas fa-trash me-2"></i> Eliminar
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
@@ -59,6 +82,25 @@
     {% else %}
     <p>No hay campos agregados todavía.</p>
     {% endif %}
+</div>
+
+<!-- MODAL edicion de preguntas -->
+ <div class="modal fade" id="editarCampoModal" tabindex="-1" aria-labelledby="editarCampoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarCampoModalLabel">Editar Campo: <span id="campoEtiqueta"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalBodyEdicion">
+                <div class="text-center p-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

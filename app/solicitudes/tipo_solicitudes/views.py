@@ -612,22 +612,29 @@ def crear_o_editar_formulario(request, pk=None):
 
 
 @login_required
-def crear_campos(request, formulario_id):
+def crear_o_editar_campos(request, formulario_id, campo_id=None):
     formulario = get_object_or_404(FormularioSolicitud, pk=formulario_id)
+    campo_a_editar = None
+    
+    if campo_id:
+        campo_a_editar = get_object_or_404(CampoFormulario, pk=campo_id, formulario=formulario)
 
     if request.method == "POST":
-        form = FormCampoFormulario(request.POST, formulario=formulario)
+        form = FormCampoFormulario(request.POST, instance=campo_a_editar, formulario=formulario)
         if form.is_valid():
-            nuevo_campo = form.save(commit=False)
-            nuevo_campo.formulario = formulario
+            nuevo_o_editado_campo = form.save(commit=False)
+            nuevo_o_editado_campo.formulario = formulario
 
             # Si el usuario no pone orden o pone 0 → poner al final
-            if not nuevo_campo.orden or nuevo_campo.orden == 0:
-                max_orden = formulario.campos.aggregate(
-                    Max('orden'))['orden__max'] or 0
-                nuevo_campo.orden = max_orden + 1
+            if not nuevo_o_editado_campo.orden or nuevo_o_editado_campo.orden == 0:
+                qs_orden = formulario.campos
+                if campo_a_editar:
+                    qs_orden = qs_orden.exclude(pk=campo_a_editar.id)
+                    
+                max_orden = qs_orden.aggregate(Max('orden'))['orden__max'] or 0
+                nuevo_o_editado_campo.orden = max_orden + 1
 
-            nuevo_campo.save()
+            nuevo_o_editado_campo.save()
             return redirect('crear_campos', formulario_id=formulario.id)
 
     else:

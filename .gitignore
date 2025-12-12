@@ -16,27 +16,9 @@ db.sqlite3
 tickets/
 progress.output
 
-# Documentación DSM5 y archivos de pruebas
-Readme*.md
-readme*.md
-Plan_Pruebas_JMeter_DSM5*.md
-Requerimientos.txt
-CHECKLIST_DSM5_PROYECTO_FINAL.md
-CORRECCION_PEP8_DSM5_COMPLETA.md
-FASE2_REFACTORIZACION_COMPLETA.md
-INDICE_DOCUMENTACION_DSM5.md
-README_DSM5.md
-REPORTE_COMPLEJIDAD_DSM5.md
-RESUMEN_EJECUTIVO_DSM5.md
-
 # Ignorar todos los archivos .md excepto README.md
 *.md
 !README.md
-
-# JMeter y archivos de pruebas de carga
-JMX/
-*.jmx
-*.csv
 
 # Archivos de configuración local
 apache-jmeter-*/

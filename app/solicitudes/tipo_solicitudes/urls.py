@@ -4,7 +4,8 @@ from tipo_solicitudes import views
 # 'tipo-solicitud/'
 urlpatterns = [
     path('', views.lista_solicitudes, name='lista_tipo_solicitudes'),
-    path('agregar/', views.agregar, name='agrega_solicitud'),
+    path('agregar/', views.agregar_o_editar, name='agrega_solicitud'),
+    path('editar/<int:tipo_solicitud_id>', views.agregar_o_editar, name='editar_tipo_solicitud'),
     path('grafica_solicitudes/', views.vista_tres_graficas,
          name='grafica_solicitudes'),
     path('generar_pdf_graficas/', views.generar_pdf_graficas,

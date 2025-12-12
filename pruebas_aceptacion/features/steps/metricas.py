@@ -4,6 +4,7 @@ import re
 
 from .utils import parse_time_hms_to_minutes
 
+
 @then(u'debería ver el título "{title}"')
 def ver_titulo(context, title):
     # busca un h1 con el texto esperado
